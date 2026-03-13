@@ -1,7 +1,8 @@
 from scraper.wallet_extractor import extract_wallets
-#from blockchain.fetch_transactions import fetch_transactions
+from blockchain.fetch_transactions import fetch_transactions
 #from analysis.graph_builder import build_graph
 #from visualization.dashboard import show_graph
+
 
 text = """
 Vendor listing
@@ -12,3 +13,8 @@ Payment address:
 wallets = extract_wallets(text)
 
 print("Detected wallets:", wallets)
+
+for wallet in wallets:
+    txs = fetch_transactions(wallet)
+    print("Transactions for", wallet)
+    print(txs)
