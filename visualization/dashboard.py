@@ -392,25 +392,7 @@ with left_col:
             label_visibility="collapsed"
         )
         
-        col_btn1, col_btn2 = st.columns(2)
-        with col_btn1:
-            if st.button("📋 Load Sample", use_container_width=True):
-                sample_text = """
-Intercepted message --- 
-"Send 0.5 BTC to bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq for the goods."
-
-Vendor: SpecterKey
-Payment: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
-
-Alternative escrow: 3FZbgi29cpjq2GjdwV8eyHuJNkLtktZc5
-
-Bulk orders: bc1qxy2kgdygjrsqptzq2n0yrf2493p83kkfjhx0wlh
-"""
-                st.session_state['sample_loaded'] = sample_text
-                st.rerun()
-        
-        with col_btn2:
-            if st.button("🔍 Extract Wallets", type="primary", use_container_width=True):
+        if st.button("🔍 Extract Wallets", type="primary", use_container_width=True):
                 input_text = st.session_state.get('text_input', '')
                 if input_text:
                     with st.spinner("Extracting wallets..."):
@@ -795,8 +777,38 @@ with right_col:
     
     with tab5:
         st.markdown("### Chat Intelligence")
+        wallets = st.session_state.get('wallets', [])
+        if wallets:
+            st.markdown("#### Intercepted Communications Simulation")
+            
+            w1 = wallets[0]
+            curr1 = "AVAX" if w1.startswith('0x') else "BTC"
+            
+            if len(wallets) >= 2:
+                w2 = wallets[1]
+                curr2 = "AVAX" if w2.startswith('0x') else "BTC"
+                
+                chat_content = f"""<div style="font-family: monospace; background: #0a0c10; padding: 15px; border-radius: 8px; border-left: 3px solid #ff4d4d; color: #d0d0d0; margin-bottom: 20px;">
+<span style="color: #6bb3c4">[14:02:11] <b>Vendor_Ghost:</b></span> Payment received. Moving funds through the mixer now.<br>
+<span style="color: #ff9900">[14:02:45] <b>Buyer_77:</b></span> Can you split the routing? Half to my {curr1} and half to {curr2}?<br>
+<span style="color: #6bb3c4">[14:03:02] <b>Vendor_Ghost:</b></span> Understood. Processing 5.5 {curr1} to <span style="color: #ff3131;">{w1[:12]}...</span><br>
+<span style="color: #6bb3c4">[14:03:15] <b>Vendor_Ghost:</b></span> And bridging the remaining balance to <span style="color: #ff3131;">{w2[:12]}...</span> on the {curr2} network.<br>
+<span style="color: #ff9900">[14:03:50] <b>Buyer_77:</b></span> Perfect. Erasing logs now.
+</div>"""
+            else:
+                chat_content = f"""<div style="font-family: monospace; background: #0a0c10; padding: 15px; border-radius: 8px; border-left: 3px solid #ff4d4d; color: #d0d0d0; margin-bottom: 20px;">
+<span style="color: #ff9900">[22:14:05] <b>Client_Zero:</b></span> Is the package ready for the drop?<br>
+<span style="color: #6bb3c4">[22:15:12] <b>Admin_Silk:</b></span> Yes. Escrow is locked. Send 2.4 {curr1} to the deposit address.<br>
+<span style="color: #6bb3c4">[22:15:15] <b>Admin_Silk:</b></span> <span style="color: #ff3131;">{w1}</span><br>
+<span style="color: #ff9900">[22:18:22] <b>Client_Zero:</b></span> Transaction initiated. Waiting for confirmations.
+</div>"""
+
+            st.markdown(chat_content, unsafe_allow_html=True)
+            st.markdown("---")
+            
+        st.markdown("#### Manual Extraction Tool")
         
-        chat_log = st.text_area("Paste chat:", height=100,
+        chat_log = st.text_area("Paste raw chat logs here for scanning:", height=100,
                                placeholder="Buyer: Send to bc1qar0s...",
                                label_visibility="collapsed")
         
